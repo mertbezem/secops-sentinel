@@ -164,7 +164,6 @@ async def custom_swagger_ui_html():
         swagger_favicon_url="https://fastapi.tiangolo.com/img/favicon.png",
         swagger_css_url="/static/swagger_theme.css",
         swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
-        custom_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js",
     )
 
 
