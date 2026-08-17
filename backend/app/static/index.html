@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecOps Sentinel — Otonom SOC & SIEM Tehdit İstihbarat Platformu</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for High-End SOC Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Geometrik & Simetrik Boşluk Ölçeği */
+            --space-2xs: 4px;
+            --space-xs: 8px;
+            --space-sm: 12px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+
+            /* Kenarlık Yuvarlaklıkları */
+            --radius-xs: 4px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-pill: 9999px;
+
+            /* Kurumsal Obsidyen Renk Paleti */
+            --bg-void: #050811;
+            --bg-base: #080d1a;
+            --bg-surface: #0e1526;
+            --bg-card: #121b30;
+            --bg-card-hover: #16223d;
+            --bg-glass: rgba(14, 21, 38, 0.85);
+
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-medium: rgba(255, 255, 255, 0.12);
+            --border-strong: rgba(255, 255, 255, 0.18);
+            --border-accent: rgba(14, 165, 233, 0.4);
+
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+
+            --cyan-500: #0ea5e9;
+            --cyan-400: #38bdf8;
+            --cyan-glow: rgba(14, 165, 233, 0.35);
+
+            --red-500: #ef4444;
+            --red-bg: rgba(239, 68, 68, 0.12);
+            --red-border: rgba(239, 68, 68, 0.35);
+
+            --orange-500: #f97316;
+            --orange-bg: rgba(249, 115, 22, 0.12);
+            --orange-border: rgba(249, 115, 22, 0.35);
+
+            --yellow-500: #eab308;
+            --yellow-bg: rgba(234, 179, 8, 0.12);
+            --yellow-border: rgba(234, 179, 8, 0.35);
+
+            --green-500: #10b981;
+            --green-bg: rgba(16, 185, 129, 0.12);
+            --green-border: rgba(16, 185, 129, 0.35);
+
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-display: 'Space Grotesk', sans-serif;
+
+            --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+            --shadow-float: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-void);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.07) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(14, 21, 38, 0.9) 0px, transparent 70%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 1. Üst Navigasyon Çubuğu (Header) */
+        header.navbar {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: var(--space-md) var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .brand-block {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 16px var(--cyan-glow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .brand-text h1 {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 0.02em;
+        }
+
+        .pill-badge {
+            font-size: 10.5px;
+            font-weight: 700;
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--cyan-400);
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border-accent);
+            font-family: var(--font-mono);
+        }
+
+        .nav-center-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2xs);
+            background: rgba(8, 13, 26, 0.7);
+            padding: var(--space-2xs);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 36px;
+        }
+
+        .nav-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+            color: #ffffff;
+            border-color: var(--border-accent);
+            box-shadow: 0 0 14px rgba(14, 165, 233, 0.25);
+        }
+
+        .header-right-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .user-chip {
+            background: var(--green-bg);
+            color: #86efac;
+            border: 1px solid var(--green-border);
+            padding: 0 var(--space-md);
+            height: 36px;
+            border-radius: var(--radius-pill);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            transition: all 0.2s;
+        }
+
+        .user-chip:hover {
+            background: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .swagger-btn {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--cyan-400);
+            border: 1px solid var(--border-accent);
+            padding: 0 var(--space-md);
+            height: 36px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .swagger-btn:hover {
+            background: var(--cyan-500);
+            color: #ffffff;
+            box-shadow: 0 0 14px var(--cyan-glow);
+        }
+
+        /* 2. Ana Gövde Alanı */
+        main.main-viewport {
+            max-width: 1480px;
+            width: 100%;
+            margin: 0 auto;
+            padding: var(--space-lg) var(--space-xl);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        /* 3. Sistem Durum & Hızlı Aksiyon Paneli */
+        .system-banner {
+            background: linear-gradient(90deg, rgba(18, 27, 48, 0.9) 0%, rgba(14, 21, 38, 0.95) 100%);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-card);
+        }
+
+        .system-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            font-size: 13.5px;
+        }
+
+        .live-dot-wrap {
+            position: relative;
+            width: 10px;
+            height: 10px;
+        }
+
+        .live-dot-wrap::before, .live-dot-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            background: var(--green-500);
+        }
+
+        .live-dot-wrap::after {
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(2.6); opacity: 0; }
+        }
+
+        .btn-group-symmetrical {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .action-button {
+            background-color: #1e293b;
+            color: #ffffff;
+            border: 1px solid var(--border-medium);
+            padding: 0 var(--space-md);
+            height: 38px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            transition: all 0.2s ease;
+        }
+
+        .action-button:hover {
+            background-color: #27354f;
+            border-color: var(--cyan-400);
+            transform: translateY(-1px);
+        }
+
+        .action-button.primary {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            border-color: var(--cyan-400);
+            box-shadow: 0 0 16px var(--cyan-glow);
+        }
+
+        .action-button.primary:hover {
+            background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+            box-shadow: 0 0 24px rgba(2, 132, 199, 0.6);
+        }
+
+        /* 4. Simetrik 4 Sütunlu KPI Kartları */
+        .kpi-row-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+        }
+
+        .kpi-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+        }
+
+        .kpi-box:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-float);
+        }
+
+        .kpi-box::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), transparent);
+        }
+
+        .kpi-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kpi-heading {
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+        }
+
+        .kpi-icon-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-xs);
+            background: rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .kpi-stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            font-family: var(--font-mono);
+            line-height: 1.1;
+            color: #ffffff;
+            margin-top: var(--space-xs);
+        }
+
+        .kpi-sub-text {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2xs);
+            margin-top: var(--space-xs);
+        }
+
+        /* 5. Ana Panel Kapsayıcısı */
+        .glass-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+        }
+
+        .panel-header-bar {
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(14, 21, 38, 0.6);
+            height: 64px;
+        }
+
+        .panel-title-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .panel-title-group h2 {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .panel-counter {
+            background: rgba(14, 165, 233, 0.12);
+            color: var(--cyan-400);
+            font-size: 11.5px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            padding: 2px 10px;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border-accent);
+        }
+
+        .panel-filters {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .input-search-box {
+            position: relative;
+            width: 250px;
+        }
+
+        .input-search-box input {
+            background-color: var(--bg-void);
+            border: 1px solid var(--border-medium);
+            color: #ffffff;
+            font-size: 13px;
+            padding: 0 var(--space-md) 0 34px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            width: 100%;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-search-box input:focus {
+            border-color: var(--cyan-400);
+            box-shadow: 0 0 10px var(--cyan-glow);
+        }
+
+        .input-search-box span.icon-prefix {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .dropdown-select {
+            background-color: var(--bg-void);
+            border: 1px solid var(--border-medium);
+            color: #ffffff;
+            font-size: 13px;
+            padding: 0 var(--space-md);
+            height: 38px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dropdown-select:focus {
+            border-color: var(--cyan-400);
+        }
+
+        /* 6. Veri Tabloları */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table.soc-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        table.soc-table th {
+            background-color: #0a0f1d;
+            color: var(--text-secondary);
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--border-subtle);
+            white-space: nowrap;
+        }
+
+        table.soc-table td {
+            padding: 14px var(--space-lg);
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        table.soc-table tr:hover td {
+            background-color: rgba(30, 41, 59, 0.4);
+        }
+
+        table.soc-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 7. Tehdit Seviyesi & Durum Rozetleri */
+        .badge-sev {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: var(--radius-xs);
+            font-size: 11.5px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            letter-spacing: 0.02em;
+        }
+
+        .badge-sev.CRITICAL, .badge-sev.Error { background: var(--red-bg); color: #f87171; border: 1px solid var(--red-border); }
+        .badge-sev.HIGH, .badge-sev.Warning { background: var(--orange-bg); color: #fb923c; border: 1px solid var(--orange-border); }
+        .badge-sev.MEDIUM { background: var(--yellow-bg); color: #fde047; border: 1px solid var(--yellow-border); }
+        .badge-sev.LOW, .badge-sev.Information { background: var(--green-bg); color: #86efac; border: 1px solid var(--green-border); }
+
+        .tag-mitre {
+            background: #090e1a;
+            color: var(--cyan-400);
+            border: 1px solid var(--border-subtle);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        /* 8. MITRE Matrisi 6 Sütunlu Izgara */
+        .mitre-grid-6col {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: var(--space-md);
+            padding: var(--space-lg);
+        }
+
+        .mitre-tactic-col {
+            background: #090e1a;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mitre-col-head {
+            background: #121b30;
+            padding: 10px var(--space-sm);
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #ffffff;
+            border-bottom: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+
+        .mitre-col-cards {
+            padding: var(--space-xs);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            flex: 1;
+        }
+
+        .mitre-tech-card {
+            background: #0e1526;
+            border: 1px solid var(--border-subtle);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .mitre-tech-card.detected {
+            border-color: var(--red-500);
+            background: var(--red-bg);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .mitre-tech-card.detected.HIGH {
+            border-color: var(--orange-500);
+            background: var(--orange-bg);
+            box-shadow: 0 0 12px rgba(249, 115, 22, 0.2);
+        }
+
+        /* 9. Analitik Grafikleri Izgarası */
+        .analytics-grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+
+        .chart-card-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card-box h3 {
+            font-family: var(--font-display);
+            font-size: 15px;
+            color: #ffffff;
+            margin-bottom: var(--space-md);
+        }
+
+        .chart-canvas-wrap {
+            height: 280px;
+            position: relative;
+            width: 100%;
+        }
+
+        /* Sekme Görünümleri */
+        .view-section-pane {
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .view-section-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal Pencereleri */
+        .modal-screen-dim {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(4, 6, 12, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        .modal-screen-dim.active {
+            display: flex;
+        }
+
+        .modal-surface-box {
+            background: #0e1526;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 840px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-float);
+        }
+
+        .modal-surface-head {
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0a0f1d;
+        }
+
+        /* Bildirim Akışı (Toast) */
+        #toast-feed {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .toast-pill {
+            background: #1e293b;
+            color: #ffffff;
+            border-left: 4px solid var(--cyan-400);
+            border-radius: var(--radius-sm);
+            padding: 12px var(--space-md);
+            font-size: 13px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideLeft 0.3s ease;
+        }
+
+        .toast-pill.success { border-left-color: var(--green-500); }
+        .toast-pill.error { border-left-color: var(--red-500); }
+
+        @keyframes slideLeft {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        footer.site-footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: var(--space-md) var(--space-xl);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            background: rgba(8, 13, 26, 0.9);
+            margin-top: auto;
+        }
+
+        @media (max-width: 1100px) {
+            .kpi-row-grid { grid-template-columns: repeat(2, 1fr); }
+            .mitre-grid-6col { grid-template-columns: repeat(3, 1fr); }
+            .analytics-grid-2col { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-row-grid { grid-template-columns: 1fr; }
+            .mitre-grid-6col { grid-template-columns: 1fr; }
+            header.navbar { height: auto; flex-direction: column; gap: var(--space-md); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Üst Gezinme Çubuğu -->
+    <header class="navbar">
+        <a href="#" class="brand-block">
+            <div class="brand-icon">🛡️</div>
+            <div class="brand-text">
+                <h1>SecOps Sentinel <span class="pill-badge">v0.1.0 PRO</span></h1>
+                <p>Otonom Windows Olay Günlüğü SIEM & Tehdit Radarı</p>
+            </div>
+        </a>
+
+        <nav class="nav-center-menu">
+            <button class="nav-btn active" onclick="switchView('incidents', this)">🚨 Güvenlik Olayları</button>
+            <button class="nav-btn" onclick="switchView('explorer', this)">🔍 Log Gezgini</button>
+            <button class="nav-btn" onclick="switchView('mitre', this)">🗺️ MITRE Matrisi</button>
+            <button class="nav-btn" onclick="switchView('analytics', this)">📊 SOC Analitiği</button>
+            <button class="nav-btn" onclick="switchView('machines', this)">🖥️ Varlıklar</button>
+            <button class="nav-btn" onclick="switchView('rules', this)">⚙️ Kurallar</button>
+            <button class="nav-btn" onclick="switchView('alerts', this)">📧 Bildirimler</button>
+        </nav>
+
+        <div class="header-right-actions">
+            <button class="user-chip" onclick="openLoginModal()" id="userProfileBtn">👤 admin (YÖNETİCİ)</button>
+            <a href="/docs" target="_blank" class="swagger-btn">API Dokümantasyonu ↗</a>
+        </div>
+    </header>
+
+    <!-- Ana Çalışma Alanı -->
+    <main class="main-viewport">
+
+        <!-- Sistem Durum & Aksiyon Paneli -->
+        <div class="system-banner">
+            <div class="system-status-indicator">
+                <div class="live-dot-wrap"></div>
+                <span>SOC Tehdit Durumu: <strong>CANLI & İZLEMEDE</strong></span>
+                <span style="color: var(--border-medium);">|</span>
+                <span id="bannerLastUpdate" style="color: var(--text-secondary); font-size: 13px;">Son Güncelleme: -</span>
+            </div>
+            <div class="btn-group-symmetrical">
+                <button class="action-button" onclick="refreshAllData()">🔄 Verileri Yenile</button>
+                <button class="action-button primary" id="btnRunDetection" onclick="triggerDetectionPipeline()">⚡ Algılama Motorunu Çalıştır</button>
+            </div>
+        </div>
+
+        <!-- 4 Sütunlu Temel Metrik Kartları (KPI) -->
+        <div class="kpi-row-grid">
+            <div class="kpi-box">
+                <div class="kpi-top-row">
+                    <span class="kpi-heading">Toplam Log Kaydı</span>
+                    <div class="kpi-icon-badge">📊</div>
+                </div>
+                <div class="kpi-stat-number" id="cardTotalEvents">-</div>
+                <div class="kpi-sub-text">67.716 Gerçek Olay &bull; Tekilleştirme Aktif</div>
+            </div>
+
+            <div class="kpi-box">
+                <div class="kpi-top-row">
+                    <span class="kpi-heading">Açık Güvenlik Olayları</span>
+                    <div class="kpi-icon-badge" style="color: var(--cyan-400);">⚠️</div>
+                </div>
+                <div class="kpi-stat-number" id="cardOpenIncidents" style="color: var(--cyan-400);">-</div>
+                <div class="kpi-sub-text" id="cardTotalIncidents">Toplam: - olay tespit edildi</div>
+            </div>
+
+            <div class="kpi-box">
+                <div class="kpi-top-row">
+                    <span class="kpi-heading">Kritik Tehditler</span>
+                    <div class="kpi-icon-badge" style="color: var(--red-500);">🔥</div>
+                </div>
+                <div class="kpi-stat-number" id="cardCritIncidents" style="color: var(--red-500);">-</div>
+                <div class="kpi-sub-text" id="cardHighIncidents">Yüksek Seviye: - olay</div>
+            </div>
+
+            <div class="kpi-box">
+                <div class="kpi-top-row">
+                    <span class="kpi-heading">İzlenen Varlıklar</span>
+                    <div class="kpi-icon-badge" style="color: #86efac;">💻</div>
+                </div>
+                <div class="kpi-stat-number" id="cardTotalMachines">-</div>
+                <div class="kpi-sub-text">Davranışsal Taban Çizgisi Aktif</div>
+            </div>
+        </div>
+
+        <!-- GÖRÜNÜM 1: GÜVENLİK OLAYLARI KUYRUĞU -->
+        <section id="view-incidents" class="view-section-pane active">
+            <div class="glass-panel">
+                <div class="panel-header-bar">
+                    <div class="panel-title-group">
+                        <h2>🚨 Güvenlik Olayları Kuyruğu (Incident Queue)</h2>
+                        <span class="panel-counter" id="tableItemCount">0 Olay</span>
+                    </div>
+                    <div class="panel-filters">
+                        <div class="input-search-box">
+                            <span class="icon-prefix">🔍</span>
+                            <input type="text" id="incidentSearchInput" placeholder="Olay ara (Cihaz adı, ID, Kural)..." oninput="filterIncidentsTable()">
+                        </div>
+                        <select class="dropdown-select" id="filterSeverity" onchange="fetchIncidents()">
+                            <option value="">Tüm Tehdit Seviyeleri</option>
+                            <option value="CRITICAL">🔴 KRİTİK (CRITICAL)</option>
+                            <option value="HIGH">🟠 YÜKSEK (HIGH)</option>
+                            <option value="MEDIUM">🟡 ORTA (MEDIUM)</option>
+                            <option value="LOW">🟢 DÜŞÜK (LOW)</option>
+                        </select>
+                        <select class="dropdown-select" id="filterStatus" onchange="fetchIncidents()">
+                            <option value="">Tüm Durumlar</option>
+                            <option value="OPEN">🔴 AÇIK (OPEN)</option>
+                            <option value="INVESTIGATING">🟡 İNCELENİYOR (INVESTIGATING)</option>
+                            <option value="RESOLVED">🟢 ÇÖZÜLDÜ (RESOLVED)</option>
+                            <option value="FALSE_POSITIVE">⚪ ASILSIZ İHBAR (FALSE POSITIVE)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="soc-table">
+                        <thead>
+                            <tr>
+                                <th>Olay No</th>
+                                <th>Olay Başlığı</th>
+                                <th>Hedef Varlık</th>
+                                <th>Seviye</th>
+                                <th>Risk Skoru</th>
+                                <th>Bulgu Adedi</th>
+                                <th>MITRE ATT&CK</th>
+                                <th>İnceleme Durumu</th>
+                                <th style="text-align: right;">Aksiyonlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incidentTableBody">
+                            <tr><td colspan="9" style="text-align: center; color: var(--text-tertiary); padding: 40px;">Güvenlik olayları yükleniyor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- GÖRÜNÜM 2: CANLI LOG GEZGİNİ -->
+        <section id="view-explorer" class="view-section-pane">
+            <div class="glass-panel">
+                <div class="panel-header-bar">
+                    <div class="panel-title-group">
+                        <h2>🔍 Canlı Ham Log Arama Gezgini (SIEM Log Explorer)</h2>
+                        <span class="panel-counter" id="logExplorerCount">0 Kayıt</span>
+                    </div>
+                    <div class="panel-filters">
+                        <div class="input-search-box" style="width: 280px;">
+                            <span class="icon-prefix">🔍</span>
+                            <input type="text" id="logSearchQuery" placeholder="Mesajda ara (ör. Kerberos, Error, Restart)..." onkeypress="if(event.key==='Enter') fetchLogs(1)">
+                        </div>
+                        <select class="dropdown-select" id="logFilterSource" onchange="fetchLogs(1)">
+                            <option value="">Tüm Günlük Kaynakları</option>
+                            <option value="Security">Security (Güvenlik)</option>
+                            <option value="System">System (Sistem)</option>
+                            <option value="Application">Application (Uygulama)</option>
+                        </select>
+                        <select class="dropdown-select" id="logFilterType" onchange="fetchLogs(1)">
+                            <option value="">Tüm Olay Türleri</option>
+                            <option value="Error">🔴 Hata (Error)</option>
+                            <option value="Warning">🟠 Uyarı (Warning)</option>
+                            <option value="Information">🟢 Bilgi (Information)</option>
+                        </select>
+                        <button class="action-button primary" onclick="fetchLogs(1)">Sorgula</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="soc-table">
+                        <thead>
+                            <tr>
+                                <th>Olay ID</th>
+                                <th>Zaman Damgası (UTC)</th>
+                                <th>Kaynak Cihaz</th>
+                                <th>Kanal / Kaynak</th>
+                                <th>Tür</th>
+                                <th>Mesaj / Şablon Özeti</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody">
+                            <tr><td colspan="6" style="text-align: center; padding: 30px;">Log kayıtları yükleniyor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px var(--space-lg); background: #0a0f1d; border-top: 1px solid var(--border-subtle);">
+                    <span id="logPaginationInfo" style="font-size: 12.5px; color: var(--text-secondary);">Sayfa 1</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="action-button" onclick="changeLogPage(-1)">◀ Önceki Sayfa</button>
+                        <button class="action-button" onclick="changeLogPage(1)">Sonraki Sayfa ▶</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GÖRÜNÜM 3: MITRE ATT&CK ISI MATRİSİ -->
+        <section id="view-mitre" class="view-section-pane">
+            <div class="glass-panel">
+                <div class="panel-header-bar">
+                    <div class="panel-title-group">
+                        <h2>🗺️ MITRE ATT&CK Tehdit Isı Haritası (Enterprise Matrix)</h2>
+                        <span class="panel-counter" id="mitreHitCount">Yükleniyor...</span>
+                    </div>
+                </div>
+                <div class="mitre-grid-6col" id="mitreMatrixContainer">
+                    <p style="padding: 24px; color: var(--text-tertiary); grid-column: span 6; text-align: center;">MITRE tehdit matrisi yükleniyor...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GÖRÜNÜM 4: SOC ANALİTİK & GRAFİKLER -->
+        <section id="view-analytics" class="view-section-pane">
+            <div class="analytics-grid-2col">
+                <div class="chart-card-box">
+                    <h3>📊 Olay Tehdit Seviyesi Dağılımı</h3>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="chartSeverityBreakdown"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card-box">
+                    <h3>📈 Olay Durum & Karantina İstatistiği</h3>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="chartStatusBreakdown"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GÖRÜNÜM 5: VARLIKLAR & CİHAZLAR -->
+        <section id="view-machines" class="view-section-pane">
+            <div class="glass-panel">
+                <div class="panel-header-bar">
+                    <div class="panel-title-group">
+                        <h2>🖥️ İzlenen Bilgisayarlar ve Varlık Profilleri</h2>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="soc-table">
+                        <thead>
+                            <tr>
+                                <th>Cihaz ID</th>
+                                <th>Cihaz / Makine Adı</th>
+                                <th>Kritiklik Derecesi</th>
+                                <th>Toplam Olay Kaydı</th>
+                                <th>İlk Görülme (UTC)</th>
+                                <th>Son Görülme (UTC)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="machinesTableBody">
+                            <tr><td colspan="6" style="text-align: center; padding: 30px;">Cihaz profilleri yükleniyor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- GÖRÜNÜM 6: ALGILAMA KURALLARI MOTORU -->
+        <section id="view-rules" class="view-section-pane">
+            <div class="glass-panel">
+                <div class="panel-header-bar">
+                    <div class="panel-title-group">
+                        <h2>⚙️ Aktif Algılama Kuralları Motoru (Rules Engine)</h2>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="soc-table">
+                        <thead>
+                            <tr>
+                                <th>Kural Kodu</th>
+                                <th>Kural Tanımı</th>
+                                <th>Varsayılan Seviye</th>
+                                <th>MITRE ATT&CK Eşleşmesi</th>
+                                <th>Kural Durumu</th>
+                                <th>Açıklama</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rulesTableBody">
+                            <tr><td colspan="6" style="text-align: center; padding: 30px;">Algılama kuralları yükleniyor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- GÖRÜNÜM 7: BİLDİRİMLER & ENTEGRASYONLAR -->
+        <section id="view-alerts" class="view-section-pane">
+            <div class="glass-panel">
+                <div class="panel-header-bar">
+                    <div class="panel-title-group">
+                        <h2>📧 Otomatik Bildirim & Webhook Entegrasyonları</h2>
+                    </div>
+                </div>
+                <div style="padding: var(--space-lg);">
+                    <div class="analytics-grid-2col">
+                        <div style="background: #090e1a; padding: var(--space-lg); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <h3 style="font-size: 14.5px; margin-bottom: var(--space-md); color: var(--cyan-400);">Canlı Bildirim Konfigürasyonu</h3>
+                            <p style="font-size: 13px; margin-bottom: 8px;">E-Posta Bildirimleri: <strong id="alertEnabledStatus">-</strong></p>
+                            <p style="font-size: 13px; margin-bottom: 8px;">SMTP Sunucusu: <code id="alertSmtpHost" style="color: #fff;">-</code></p>
+                            <p style="font-size: 13px; margin-bottom: 8px;">Port Numarası: <code id="alertSmtpPort" style="color: #fff;">-</code></p>
+                            <p style="font-size: 13px; margin-bottom: 8px;">Minimum Alarm Seviyesi: <strong id="alertMinSev" style="color: var(--orange-500);">-</strong></p>
+                            <p style="font-size: 13px; margin-bottom: 8px;">Varsayılan Alıcı Adresi: <code id="alertToEmail" style="color: #fff;">-</code></p>
+                            <p style="font-size: 13px;">Webhook (Discord/Slack): <code style="color: #86efac;">Aktif & Hazır</code></p>
+                        </div>
+
+                        <div style="background: #090e1a; padding: var(--space-lg); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <h3 style="font-size: 14.5px; margin-bottom: var(--space-md); color: var(--cyan-400);">Canlı E-Posta Testi</h3>
+                            <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: var(--space-md);">
+                                SMTP sunucusu üzerinden anında test alarmı göndermek için alıcı e-posta adresi giriniz:
+                            </p>
+                            <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-xs);">
+                                <input type="email" id="testEmailInput" placeholder="ornek@sirket.com" style="flex: 1; background: #121b30; border: 1px solid var(--border-medium); color: #fff; padding: 0 var(--space-md); height: 38px; border-radius: var(--radius-sm); font-size: 13px; outline: none;">
+                                <button class="action-button primary" onclick="sendTestEmail()">Test Gönder</button>
+                            </div>
+                            <div id="testEmailResult" style="font-size: 12.5px; display: none; padding: 8px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Güvenlik Olayı Ayrıntı & Adli İnceleme Modalı -->
+    <div class="modal-screen-dim" id="incidentModal">
+        <div class="modal-surface-box">
+            <div class="modal-surface-head">
+                <h3 id="modalTitle" style="font-size: 16px; color: #ffffff;">Olay Detayı & Adli İnceleme</h3>
+                <button style="background: transparent; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer;" onclick="closeIncidentModal()">&times;</button>
+            </div>
+            <div style="padding: var(--space-lg);" id="modalBody">
+                <!-- JS ile dinamik olarak doldurulur -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Giriş Modalı -->
+    <div class="modal-screen-dim" id="loginModal">
+        <div class="modal-surface-box" style="max-width: 420px;">
+            <div class="modal-surface-head">
+                <h3 style="font-size: 16px; color: #ffffff;">🔐 Kullanıcı Girişi & Yetkilendirme</h3>
+                <button style="background: transparent; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer;" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div style="padding: var(--space-lg);">
+                <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: var(--space-md);">
+                    SecOps Sentinel SIEM paneline erişmek için kimlik bilgilerinizi giriniz:
+                </p>
+
+                <div style="margin-bottom: var(--space-md);">
+                    <p style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 6px; font-weight: bold;">HIZLI HESAP SEÇİMİ (DEMO):</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="background: #121b30; border: 1px solid var(--border-medium); padding: 8px 12px; border-radius: 6px; cursor: pointer;" onclick="quickFillLogin('admin', 'admin123')">
+                            <strong style="color: #fff; font-size: 12px;">👑 Yönetici (Admin)</strong>
+                            <p style="font-size: 10.5px; color: var(--cyan-400);">Tam Yetkili</p>
+                        </div>
+                        <div style="background: #121b30; border: 1px solid var(--border-medium); padding: 8px 12px; border-radius: 6px; cursor: pointer;" onclick="quickFillLogin('analyst', 'analyst123')">
+                            <strong style="color: #fff; font-size: 12px;">🛡️ Analist (Analyst)</strong>
+                            <p style="font-size: 10.5px; color: var(--green-500);">Olay Analisti</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: var(--space-sm);">
+                    <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Kullanıcı Adı</label>
+                    <input type="text" id="loginUsername" placeholder="admin" style="width: 100%; background: #090e1a; border: 1px solid var(--border-medium); color: #fff; padding: 0 12px; height: 38px; border-radius: var(--radius-sm); font-size: 13px; outline: none;">
+                </div>
+
+                <div style="margin-bottom: var(--space-lg);">
+                    <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Şifre</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" style="width: 100%; background: #090e1a; border: 1px solid var(--border-medium); color: #fff; padding: 0 12px; height: 38px; border-radius: var(--radius-sm); font-size: 13px; outline: none;">
+                </div>
+
+                <button class="action-button primary" style="width: 100%; justify-content: center; height: 40px;" onclick="performLogin()">Giriş Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirim Baloncukları -->
+    <div id="toast-feed"></div>
+
+    <!-- Alt Bilgi (Footer) -->
+    <footer class="site-footer">
+        SecOps Sentinel Kurumsal SIEM &bull; REST API: <a href="/docs" style="color: var(--cyan-400); text-decoration: none;">/docs</a> &bull; Adli PDF Raporlama &bull; AI Tehdit Analizi &bull; MITRE ATT&CK Matrisi
+    </footer>
+
+    <!-- Frontend Mantık Scripti -->
+    <script>
+        const API_BASE = "/api/v1";
+        let allIncidents = [];
+        let authToken = localStorage.getItem('secops_auth_token') || '';
+        let currentUser = null;
+        let currentLogPage = 1;
+        let severityChart = null;
+        let statusChart = null;
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function getAuthHeaders() {
+            const headers = { "Content-Type": "application/json" };
+            if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+            return headers;
+        }
+
+        function showToast(message, type = 'info') {
+            const feed = document.getElementById('toast-feed');
+            const toast = document.createElement('div');
+            toast.className = `toast-pill ${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️')}</span> <span>${escapeHtml(message)}</span>`;
+            feed.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3500);
+        }
+
+        function switchView(viewName, btnElement) {
+            document.querySelectorAll('.view-section-pane').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) {
+                target.classList.add('active');
+                if (btnElement) btnElement.classList.add('active');
+            }
+
+            if (viewName === 'explorer') fetchLogs(1);
+            if (viewName === 'mitre') fetchMitreMatrix();
+            if (viewName === 'analytics') renderAnalyticsCharts();
+            if (viewName === 'machines') fetchMachines();
+            if (viewName === 'rules') fetchRules();
+            if (viewName === 'alerts') fetchAlertConfig();
+        }
+
+        async function initAuth() {
+            if (!authToken) {
+                await performAutoLogin('admin', 'admin123');
+            } else {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/me`, { headers: getAuthHeaders() });
+                    if (res.ok) {
+                        currentUser = await res.json();
+                        updateUserBadge();
+                    } else {
+                        await performAutoLogin('admin', 'admin123');
+                    }
+                } catch (e) {
+                    console.error("Auth init error:", e);
+                }
+            }
+        }
+
+        async function performAutoLogin(username, password) {
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    authToken = data.access_token;
+                    localStorage.setItem('secops_auth_token', authToken);
+                    currentUser = data.user;
+                    updateUserBadge();
+                }
+            } catch (e) {
+                console.error("Auto login error:", e);
+            }
+        }
+
+        function updateUserBadge() {
+            const btn = document.getElementById('userProfileBtn');
+            if (currentUser) {
+                const roleTr = currentUser.role === 'ADMIN' ? 'YÖNETİCİ' : (currentUser.role === 'ANALYST' ? 'ANALİST' : 'İZLEYİCİ');
+                btn.innerText = `👤 ${currentUser.username} (${roleTr})`;
+            } else {
+                btn.innerText = `👤 Giriş Yap`;
+            }
+        }
+
+        function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+        function quickFillLogin(u, p) {
+            document.getElementById('loginUsername').value = u;
+            document.getElementById('loginPassword').value = p;
+        }
+
+        async function performLogin() {
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+            if (!u || !p) {
+                showToast("Lütfen kullanıcı adı ve şifre giriniz.", "error");
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const data = await res.json();
+                if (res.ok && data.access_token) {
+                    authToken = data.access_token;
+                    localStorage.setItem('secops_auth_token', authToken);
+                    currentUser = data.user;
+                    updateUserBadge();
+                    closeLoginModal();
+                    showToast(`Giriş başarılı! Hoş geldiniz, ${currentUser.username}`, "success");
+                    refreshAllData();
+                } else {
+                    showToast("Geçersiz kullanıcı adı veya şifre.", "error");
+                }
+            } catch (e) {
+                showToast(`Giriş hatası: ${e.message}`, "error");
+            }
+        }
+
+        async function fetchOverview() {
+            try {
+                const res = await fetch(`${API_BASE}/stats/overview`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error("İstatistik API Hatası");
+                const data = await res.json();
+                
+                document.getElementById('cardTotalEvents').innerText = Number(data.total_events || 0).toLocaleString('tr-TR');
+                document.getElementById('cardOpenIncidents').innerText = data.open_incidents || 0;
+                document.getElementById('cardTotalIncidents').innerText = `Toplam: ${data.total_incidents || 0} olay tespit edildi`;
+                
+                const crit = data.severity_breakdown?.CRITICAL || 0;
+                const high = data.severity_breakdown?.HIGH || 0;
+                document.getElementById('cardCritIncidents').innerText = crit;
+                document.getElementById('cardHighIncidents').innerText = `Yüksek Seviye: ${high} olay`;
+                
+                document.getElementById('cardTotalMachines').innerText = data.total_machines || 0;
+                document.getElementById('bannerLastUpdate').innerText = `Son Güncelleme: ${new Date().toLocaleTimeString('tr-TR')}`;
+            } catch (err) {
+                console.error("fetchOverview error:", err);
+            }
+        }
+
+        async function fetchIncidents() {
+            const sev = document.getElementById('filterSeverity').value;
+            const status = document.getElementById('filterStatus').value;
+            
+            let query = new URLSearchParams();
+            if (sev) query.append("severity", sev);
+            if (status) query.append("status", status);
+
+            try {
+                const res = await fetch(`${API_BASE}/incidents?${query.toString()}`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error("Olay Listesi API Hatası");
+                const json = await res.json();
+                allIncidents = json.items || [];
+                renderIncidentsTable(allIncidents);
+            } catch (err) {
+                console.error("fetchIncidents error:", err);
+                document.getElementById('incidentTableBody').innerHTML = `
+                    <tr><td colspan="9" style="text-align: center; color: var(--red-500); padding: 30px;">
+                        Güvenlik olayları yüklenirken bir hata oluştu.
+                    </td></tr>
+                `;
+            }
+        }
+
+        function filterIncidentsTable() {
+            const query = document.getElementById('incidentSearchInput').value.toLowerCase().trim();
+            if (!query) {
+                renderIncidentsTable(allIncidents);
+                return;
+            }
+            const filtered = allIncidents.filter(inc => 
+                inc.id.toString().includes(query) ||
+                (inc.title && inc.title.toLowerCase().includes(query)) ||
+                (inc.machine_id && inc.machine_id.toString().includes(query)) ||
+                (inc.severity && inc.severity.toLowerCase().includes(query)) ||
+                (inc.mitre_techniques && inc.mitre_techniques.some(m => m.toLowerCase().includes(query)))
+            );
+            renderIncidentsTable(filtered);
+        }
+
+        function getSeverityColor(sev) {
+            switch(sev) {
+                case 'CRITICAL': case 'Error': return '#ef4444';
+                case 'HIGH': case 'Warning': return '#f97316';
+                case 'MEDIUM': return '#eab308';
+                case 'LOW': case 'Information': return '#10b981';
+                default: return '#0ea5e9';
+            }
+        }
+
+        function getSeverityLabel(sev) {
+            switch(sev) {
+                case 'CRITICAL': return 'KRİTİK';
+                case 'HIGH': return 'YÜKSEK';
+                case 'MEDIUM': return 'ORTA';
+                case 'LOW': return 'DÜŞÜK';
+                default: return sev;
+            }
+        }
+
+        function renderIncidentsTable(items) {
+            const tbody = document.getElementById('incidentTableBody');
+            document.getElementById('tableItemCount').innerText = `${items.length} Olay`;
+            
+            if (items.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="9" style="text-align: center; color: var(--text-tertiary); padding: 40px;">
+                        Kriterlere uygun güvenlik olayı bulunamadı.
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = items.map(inc => {
+                const color = getSeverityColor(inc.severity);
+                const mitreBadges = (inc.mitre_techniques && inc.mitre_techniques.length > 0)
+                    ? inc.mitre_techniques.map(t => `<span class="tag-mitre">${escapeHtml(t)}</span>`).join('')
+                    : `<span style="color: var(--text-tertiary); font-size: 11.5px;">-</span>`;
+
+                return `
+                    <tr>
+                        <td style="font-family: var(--font-mono); font-weight: 700; color: var(--cyan-400);">#${inc.id}</td>
+                        <td>
+                            <strong style="color: #ffffff; cursor: pointer; font-size: 13.5px;" onclick="openIncidentModal(${inc.id})">${escapeHtml(inc.title)}</strong>
+                        </td>
+                        <td>
+                            <span style="font-family: var(--font-mono); color: var(--text-secondary);">Cihaz #${inc.machine_id}</span>
+                        </td>
+                        <td>
+                            <span class="badge-sev ${escapeHtml(inc.severity)}">${getSeverityLabel(inc.severity)}</span>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 50px; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden;">
+                                    <div style="height: 100%; width: ${inc.risk_score}%; background: ${color};"></div>
+                                </div>
+                                <strong style="color: ${color}; font-family: var(--font-mono); font-size: 13px;">${inc.risk_score}</strong>
+                            </div>
+                        </td>
+                        <td style="font-family: var(--font-mono); text-align: center;">${inc.finding_count || 1}</td>
+                        <td>${mitreBadges}</td>
+                        <td>
+                            <select class="dropdown-select" style="height: 32px; padding: 0 8px; font-size: 12px;" onchange="updateIncidentStatus(${inc.id}, this.value)">
+                                <option value="OPEN" ${inc.status === 'OPEN' ? 'selected' : ''}>🔴 AÇIK</option>
+                                <option value="INVESTIGATING" ${inc.status === 'INVESTIGATING' ? 'selected' : ''}>🟡 İNCELENİYOR</option>
+                                <option value="RESOLVED" ${inc.status === 'RESOLVED' ? 'selected' : ''}>🟢 ÇÖZÜLDÜ</option>
+                                <option value="FALSE_POSITIVE" ${inc.status === 'FALSE_POSITIVE' ? 'selected' : ''}>⚪ ASILSIZ</option>
+                            </select>
+                        </td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button class="action-button" style="height: 32px; padding: 0 10px; font-size: 12px;" onclick="openIncidentModal(${inc.id})">🔍 İncele</button>
+                            <a href="${API_BASE}/incidents/${inc.id}/pdf" target="_blank" class="action-button" style="height: 32px; padding: 0 10px; font-size: 12px; color: var(--cyan-400); text-decoration: none; margin-left: 4px;">📄 PDF Rapor</a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function updateIncidentStatus(id, newStatus) {
+            try {
+                const res = await fetch(`${API_BASE}/incidents/${id}`, {
+                    method: "PATCH",
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (!res.ok) throw new Error("Durum güncellenemedi");
+                showToast(`Olay #${id} durumu başarıyla güncellendi.`, 'success');
+                fetchOverview();
+                fetchIncidents();
+            } catch (e) {
+                showToast(`Hata: ${e.message}`, 'error');
+            }
+        }
+
+        async function openIncidentModal(id) {
+            const inc = allIncidents.find(i => i.id === id);
+            if (!inc) return;
+
+            document.getElementById('modalTitle').innerText = `🚨 Olay İnceleme & Adli Rapor — #${inc.id} [${getSeverityLabel(inc.severity)}]`;
+            const sevColor = getSeverityColor(inc.severity);
+            const machineName = `Cihaz #${inc.machine_id}`;
+
+            document.getElementById('modalBody').innerHTML = `
+                <div style="background: #090e1a; padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid ${sevColor}; margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h4 style="color: #ffffff; font-size: 16px; margin-bottom: 4px;">${escapeHtml(inc.title)}</h4>
+                            <p style="font-size: 13px; color: var(--text-secondary);">
+                                Hedef Varlık: <strong style="color: var(--cyan-400);">${escapeHtml(machineName)}</strong> &bull; 
+                                Risk Skoru: <strong style="color: ${sevColor}; font-family: var(--font-mono);">${inc.risk_score}/100</strong>
+                            </p>
+                        </div>
+                        <a href="${API_BASE}/incidents/${inc.id}/pdf" target="_blank" class="action-button primary" style="font-size: 12px; height: 34px; text-decoration: none;">
+                            📄 Adli PDF Raporu İndir
+                        </a>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+                    <div style="background: #090e1a; padding: 12px; border-radius: var(--radius-xs); border: 1px solid var(--border-subtle);">
+                        <p style="font-size: 10.5px; color: var(--text-tertiary); text-transform: uppercase; font-weight: bold;">İlk Görülme Zamanı (UTC)</p>
+                        <p style="font-size: 13px; font-family: var(--font-mono); color: #fff; margin-top: 2px;">${escapeHtml(inc.first_seen)}</p>
+                    </div>
+                    <div style="background: #090e1a; padding: 12px; border-radius: var(--radius-xs); border: 1px solid var(--border-subtle);">
+                        <p style="font-size: 10.5px; color: var(--text-tertiary); text-transform: uppercase; font-weight: bold;">Son Görülme Zamanı (UTC)</p>
+                        <p style="font-size: 13px; font-family: var(--font-mono); color: #fff; margin-top: 2px;">${escapeHtml(inc.last_seen)}</p>
+                    </div>
+                </div>
+
+                <!-- Yapay Zeka (AI) Tehdit Analizi Kartı -->
+                <div style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(99, 102, 241, 0.08) 100%); border: 1px solid var(--border-accent); border-radius: var(--radius-md); padding: 16px; margin-bottom: 18px;" id="aiAnalysisContainer">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h5 style="font-size: 13.5px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                            🤖 Yapay Zeka (AI) Adli Analiz & Tehdit Kök Neden Raporu
+                        </h5>
+                        <button class="action-button primary" style="font-size: 11.5px; height: 30px; padding: 0 10px;" id="btnTriggerAi" onclick="loadAiAnalysis(${inc.id})">
+                            ✨ AI Analizi Üret
+                        </button>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-secondary);">
+                        Saldırganın olası senaryosunu, tehdit güven skorunu ve çalıştırılması önerilen PowerShell müdahale komutlarını üretmek için butona tıklayınız.
+                    </p>
+                </div>
+
+                <!-- Analist İnceleme Notları & Denetim İzi -->
+                <div style="background: #090e1a; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 18px;">
+                    <h5 style="font-size: 13px; color: #ffffff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                        📝 Analist İnceleme Notları & Denetim İzi (Audit Trail)
+                    </h5>
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <input type="text" id="newAnalystNote" placeholder="İnceleme notu ekleyin (ör. IP adresi güvenlik duvarında engellendi)..." style="flex: 1; background: #121b30; border: 1px solid var(--border-medium); color: #fff; padding: 0 10px; height: 34px; border-radius: var(--radius-xs); font-size: 12.5px; outline: none;">
+                        <button class="action-button primary" style="height: 34px; padding: 0 12px;" onclick="submitAnalystNote(${inc.id})">Notu Kaydet</button>
+                    </div>
+                    <div id="notesTimelineContainer" style="display: flex; flex-direction: column; gap: 6px; max-height: 120px; overflow-y: auto;">
+                        <p style="font-size: 11.5px; color: var(--text-tertiary);">Bu olay için henüz inceleme notu eklenmedi.</p>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="action-button primary" onclick="sendIncidentEmail(${inc.id})">📧 E-Posta Alarmı Gönder</button>
+                    <button class="action-button" onclick="closeIncidentModal()">Pencereyi Kapat</button>
+                </div>
+            `;
+
+            document.getElementById('incidentModal').classList.add('active');
+            loadIncidentNotes(inc.id);
+        }
+
+        function closeIncidentModal() { document.getElementById('incidentModal').classList.remove('active'); }
+
+        async function loadAiAnalysis(id) {
+            const container = document.getElementById('aiAnalysisContainer');
+            const btn = document.getElementById('btnTriggerAi');
+            if (btn) { btn.disabled = true; btn.innerText = "⏳ AI Analiz Ediyor..."; }
+
+            try {
+                const res = await fetch(`${API_BASE}/incidents/${id}/ai-analysis`, { headers: getAuthHeaders() });
+                if (!res.ok) throw new Error("AI Analiz servisine ulaşılamadı");
+                const data = await res.json();
+
+                const cmdHtml = (data.recommended_commands || []).map((c, idx) => `
+                    <div style="background:#050811; border:1px solid #1e293b; border-radius:4px; padding:8px 12px; font-family:var(--font-mono); font-size:12px; color:#38bdf8; margin-top:6px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                        <span style="overflow-x:auto; user-select:all; flex:1;">${escapeHtml(c)}</span>
+                        <button class="action-button" style="height:24px; padding:0 8px; font-size:11px; flex-shrink:0;" onclick="copyToClipboard('${escapeHtml(c).replace(/'/g, "\\'")}', this)">📋 Kopyala</button>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h5 style="font-size: 14px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                            🤖 AI Adli Analiz Raporu & Müdahale
+                        </h5>
+                        <span class="badge-sev LOW">
+                            🛡️ %${data.confidence_score} Güven Skoru
+                        </span>
+                    </div>
+                    <p style="font-size: 12.5px; color: #e2e8f0; margin-bottom: 8px; line-height: 1.5;">
+                        <strong>Yönetici Özeti:</strong> ${escapeHtml(data.executive_summary)}
+                    </p>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.5;">
+                        <strong>Saldırı Senaryosu & Amacı:</strong> ${escapeHtml(data.attack_scenario)}
+                    </p>
+                    <div style="margin-top: 10px;">
+                        <p style="font-size: 11px; font-weight: 700; color: var(--cyan-400); text-transform: uppercase;">
+                            💻 Önerilen PowerShell / Komut Satırı Müdahale Betikleri:
+                        </p>
+                        ${cmdHtml}
+                    </div>
+                `;
+            } catch (e) {
+                showToast(`AI Analiz Hatası: ${e.message}`, 'error');
+                if (btn) { btn.disabled = false; btn.innerText = "✨ Tekrar Dene"; }
+            }
+        }
+
+        async function loadIncidentNotes(id) {
+            try {
+                const res = await fetch(`${API_BASE}/incidents/${id}/notes`, { headers: getAuthHeaders() });
+                const notes = await res.json();
+                const container = document.getElementById('notesTimelineContainer');
+                if (!notes || notes.length === 0) {
+                    container.innerHTML = `<p style="font-size: 11.5px; color: var(--text-tertiary);">Bu olay için henüz inceleme notu bulunmuyor.</p>`;
+                    return;
+                }
+                container.innerHTML = notes.map(n => `
+                    <div style="background: #121b30; padding: 6px 10px; border-radius: 4px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid var(--border-subtle);">
+                        <span><strong style="color: var(--cyan-400);">@${escapeHtml(n.author_username)}:</strong> ${escapeHtml(n.note_text)}</span>
+                        <span style="color: var(--text-tertiary); font-size: 10.5px; font-family: var(--font-mono);">${new Date(n.created_at).toLocaleTimeString('tr-TR')}</span>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error("loadIncidentNotes error:", e);
+            }
+        }
+
+        async function submitAnalystNote(id) {
+            const input = document.getElementById('newAnalystNote');
+            const text = input.value.trim();
+            if (!text) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/incidents/${id}/notes`, {
+                    method: "POST",
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ note_text: text, action_type: "NOTE" })
+                });
+                if (res.ok) {
+                    input.value = "";
+                    showToast("İnceleme notu başarıyla kaydedildi.", "success");
+                    loadIncidentNotes(id);
+                }
+            } catch (e) {
+                showToast("Not eklenemedi.", "error");
+            }
+        }
+
+        // --- Log Explorer Mantığı ---
+        async function fetchLogs(page = 1) {
+            currentLogPage = page;
+            const query = document.getElementById('logSearchQuery').value.trim();
+            const source = document.getElementById('logFilterSource').value;
+            const type = document.getElementById('logFilterType').value;
+
+            let params = new URLSearchParams();
+            params.append("page", page);
+            params.append("page_size", 25);
+            if (query) params.append("q", query);
+            if (source) params.append("source", source);
+            if (type) params.append("entry_type", type);
+
+            const tbody = document.getElementById('logsTableBody');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px;">Log kayıtları sorgulanıyor...</td></tr>`;
+
+            try {
+                const res = await fetch(`${API_BASE}/events?${params.toString()}`, { headers: getAuthHeaders() });
+                const data = await res.json();
+                const total = data.total || 0;
+                document.getElementById('logExplorerCount').innerText = `${Number(total).toLocaleString('tr-TR')} Kayıt`;
+                document.getElementById('logPaginationInfo').innerText = `Sayfa ${data.page} / ${Math.ceil(total / 25) || 1} (Toplam: ${total.toLocaleString('tr-TR')} kayıt)`;
+
+                if (!data.items || data.items.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-tertiary); padding: 30px;">Kriterlere uygun log kaydı bulunamadı.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.items.map(ev => {
+                    const badgeClass = ev.entry_type || 'Information';
+                    return `
+                        <tr>
+                            <td style="font-family: var(--font-mono); font-weight: bold; color: var(--cyan-400);">#${ev.id}</td>
+                            <td style="font-size: 12px; font-family: var(--font-mono); color: var(--text-secondary);">${escapeHtml(ev.ts_utc)}</td>
+                            <td><strong style="color: #ffffff;">${escapeHtml(ev.machine_name || 'Cihaz #' + ev.machine_id)}</strong></td>
+                            <td><span style="color: var(--text-secondary);">${escapeHtml(ev.source)}</span></td>
+                            <td><span class="badge-sev ${escapeHtml(badgeClass)}">${escapeHtml(ev.entry_type)}</span></td>
+                            <td style="font-size: 12.5px; color: #cbd5e1; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${escapeHtml(ev.template_text || ev.message)}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--red-500); padding: 30px;">Loglar yüklenirken bir hata oluştu.</td></tr>`;
+            }
+        }
+
+        function changeLogPage(delta) {
+            const newPage = currentLogPage + delta;
+            if (newPage >= 1) fetchLogs(newPage);
+        }
+
+        async function fetchMitreMatrix() {
+            try {
+                const res = await fetch(`${API_BASE}/stats/mitre-matrix`, { headers: getAuthHeaders() });
+                const data = await res.json();
+                
+                document.getElementById('mitreHitCount').innerText = `${data.total_active_techniques} Aktif Teknik (${data.total_hits} Eşleşme)`;
+                const container = document.getElementById('mitreMatrixContainer');
+
+                container.innerHTML = (data.tactics || []).map(t => {
+                    const cardsHtml = (t.techniques || []).map(tech => {
+                        const isDetected = tech.is_detected;
+                        const cardClass = isDetected ? `mitre-tech-card detected ${tech.top_severity}` : 'mitre-tech-card';
+                        const badgeColor = isDetected ? getSeverityColor(tech.top_severity) : 'var(--text-tertiary)';
+                        const badgeText = isDetected ? `🔥 ${tech.hit_count} [${getSeverityLabel(tech.top_severity)}]` : '0 Eşleşme';
+
+                        return `
+                            <div class="${cardClass}">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                    <span style="font-family: var(--font-mono); font-size: 11.5px; font-weight: bold; color: var(--cyan-400);">${escapeHtml(tech.id)}</span>
+                                    <span style="font-size: 9.5px; font-weight: 700; color: ${badgeColor}; font-family: var(--font-mono);">${badgeText}</span>
+                                </div>
+                                <div style="font-size: 12px; font-weight: 600; color: #ffffff; margin-bottom: 2px;">${escapeHtml(tech.name)}</div>
+                                <div style="font-size: 10.5px; color: var(--text-secondary); line-height: 1.25;">${escapeHtml(tech.desc)}</div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="mitre-tactic-col">
+                            <div class="mitre-col-head">
+                                <span>${escapeHtml(t.tactic)}</span>
+                            </div>
+                            <div class="mitre-col-cards">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("fetchMitreMatrix error:", e);
+            }
+        }
+
+        async function renderAnalyticsCharts() {
+            try {
+                const res = await fetch(`${API_BASE}/stats/overview`, { headers: getAuthHeaders() });
+                const data = await res.json();
+                
+                const sevCounts = [
+                    data.severity_breakdown?.CRITICAL || 0,
+                    data.severity_breakdown?.HIGH || 0,
+                    data.severity_breakdown?.MEDIUM || 0,
+                    data.severity_breakdown?.LOW || 0
+                ];
+
+                const ctxSev = document.getElementById('chartSeverityBreakdown');
+                if (ctxSev) {
+                    if (severityChart) severityChart.destroy();
+                    severityChart = new Chart(ctxSev, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['KRİTİK (CRITICAL)', 'YÜKSEK (HIGH)', 'ORTA (MEDIUM)', 'DÜŞÜK (LOW)'],
+                            datasets: [{
+                                data: sevCounts,
+                                backgroundColor: ['#ef4444', '#f97316', '#eab308', '#10b981'],
+                                borderColor: '#0e1526',
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: 'bold' } } }
+                            }
+                        }
+                    });
+                }
+
+                const ctxStatus = document.getElementById('chartStatusBreakdown');
+                if (ctxStatus) {
+                    if (statusChart) statusChart.destroy();
+                    statusChart = new Chart(ctxStatus, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Açık (OPEN)', 'İnceleniyor (INVESTIGATING)', 'Çözüldü (RESOLVED)', 'Asılsız (FALSE POSITIVE)'],
+                            datasets: [{
+                                label: 'Olay Sayısı',
+                                data: [data.open_incidents || 0, 0, (data.total_incidents - data.open_incidents) || 0, 0],
+                                backgroundColor: ['#0ea5e9', '#eab308', '#10b981', '#64748b'],
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                                x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                            },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("renderAnalyticsCharts error:", e);
+            }
+        }
+
+        async function fetchMachines() {
+            try {
+                const res = await fetch(`${API_BASE}/machines`, { headers: getAuthHeaders() });
+                const json = await res.json();
+                const tbody = document.getElementById('machinesTableBody');
+                tbody.innerHTML = (json.items || []).map(m => `
+                    <tr>
+                        <td style="font-family: var(--font-mono); font-weight: bold; color: var(--cyan-400);">#${m.id}</td>
+                        <td><strong>${escapeHtml(m.name)}</strong></td>
+                        <td><span class="badge-sev ${escapeHtml(m.criticality)}">${getSeverityLabel(m.criticality)}</span></td>
+                        <td style="font-family: var(--font-mono);">${Number(m.event_count || 0).toLocaleString('tr-TR')}</td>
+                        <td style="font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono);">${escapeHtml(m.first_seen || '-')}</td>
+                        <td style="font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono);">${escapeHtml(m.last_seen || '-')}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error("fetchMachines error:", e);
+            }
+        }
+
+        async function fetchRules() {
+            try {
+                const res = await fetch(`${API_BASE}/rules`, { headers: getAuthHeaders() });
+                const json = await res.json();
+                const tbody = document.getElementById('rulesTableBody');
+                tbody.innerHTML = (json.items || []).map(r => `
+                    <tr>
+                        <td style="font-family: var(--font-mono); font-weight: bold; color: var(--cyan-400);">${escapeHtml(r.code)}</td>
+                        <td><strong>${escapeHtml(r.name)}</strong></td>
+                        <td><span class="badge-sev ${escapeHtml(r.severity)}">${getSeverityLabel(r.severity)}</span></td>
+                        <td>${(r.mitre_techniques || []).map(t => `<span class="tag-mitre">${escapeHtml(t)}</span>`).join('')}</td>
+                        <td><span class="badge-sev ${r.is_active ? 'LOW' : 'CRITICAL'}">${r.is_active ? 'AKTİF' : 'PASİF'}</span></td>
+                        <td style="font-size: 12.5px; color: var(--text-secondary);">${escapeHtml(r.description || '-')}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error("fetchRules error:", e);
+            }
+        }
+
+        async function fetchAlertConfig() {
+            try {
+                const res = await fetch(`${API_BASE}/alerts/config`, { headers: getAuthHeaders() });
+                const data = await res.json();
+                document.getElementById('alertEnabledStatus').innerText = data.email_alerts_enabled ? '✅ AKTİF' : '❌ KAPALI';
+                document.getElementById('alertEnabledStatus').style.color = data.email_alerts_enabled ? 'var(--green-500)' : 'var(--red-500)';
+                document.getElementById('alertSmtpHost').innerText = data.smtp_host || '-';
+                document.getElementById('alertSmtpPort').innerText = data.smtp_port || '-';
+                document.getElementById('alertMinSev').innerText = getSeverityLabel(data.alert_min_severity || 'HIGH');
+                document.getElementById('alertToEmail').innerText = data.alert_email_to || '-';
+            } catch (e) {
+                console.error("fetchAlertConfig error:", e);
+            }
+        }
+
+        async function sendTestEmail() {
+            const input = document.getElementById('testEmailInput');
+            const resultBox = document.getElementById('testEmailResult');
+            const email = input.value.trim();
+
+            resultBox.style.display = 'block';
+            resultBox.style.background = '#1e293b';
+            resultBox.style.color = 'var(--cyan-400)';
+            resultBox.innerText = "⏳ Test e-postası gönderiliyor...";
+
+            try {
+                const res = await fetch(`${API_BASE}/alerts/test`, {
+                    method: "POST",
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ recipient: email || undefined })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    resultBox.style.background = 'var(--green-bg)';
+                    resultBox.style.color = 'var(--green-500)';
+                    resultBox.innerText = `✅ Test e-postası başarıyla iletildi: ${escapeHtml(data.recipient)}`;
+                    showToast("Test e-postası başarıyla gönderildi!", "success");
+                } else {
+                    resultBox.style.background = 'var(--red-bg)';
+                    resultBox.style.color = 'var(--red-500)';
+                    resultBox.innerText = `❌ Hata: ${escapeHtml(data.detail?.message || data.message || 'Gönderilemedi')}`;
+                    showToast("Test e-postası gönderilemedi.", "error");
+                }
+            } catch (e) {
+                resultBox.style.background = 'var(--red-bg)';
+                resultBox.style.color = 'var(--red-500)';
+                resultBox.innerText = `❌ Sunucu Hatası: ${escapeHtml(e.message)}`;
+            }
+        }
+
+        async function sendIncidentEmail(id) {
+            try {
+                const res = await fetch(`${API_BASE}/alerts/incident/${id}`, {
+                    method: "POST",
+                    headers: getAuthHeaders()
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(`Olay #${id} e-posta alarmı başarıyla gönderildi!`, 'success');
+                } else {
+                    showToast(`E-posta gönderilemedi: ${json.message}`, 'error');
+                }
+            } catch (e) {
+                showToast(`E-posta gönderme hatası: ${e.message}`, 'error');
+            }
+        }
+
+        async function triggerDetectionPipeline() {
+            const btn = document.getElementById('btnRunDetection');
+            btn.disabled = true;
+            btn.innerText = "⏳ Motor Çalışıyor...";
+            try {
+                const res = await fetch(`${API_BASE}/detection/run`, {
+                    method: "POST",
+                    headers: getAuthHeaders()
+                });
+                const json = await res.json();
+                showToast(`Algılama tamamlandı: ${json.findings_created} bulgu, ${json.incidents_created} olay oluşturuldu!`, 'success');
+                fetchOverview();
+                fetchIncidents();
+            } catch (e) {
+                showToast(`Hata: ${e.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "⚡ Algılama Motorunu Çalıştır";
+            }
+        }
+
+        function refreshAllData() {
+            fetchOverview();
+            fetchIncidents();
+            showToast("Tüm veriler başarıyla güncellendi.", "info");
+        }
+
+function copyToClipboard(text, btnElement) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Komut panoya kopyalandı!", "success");
+                if (btnElement) {
+                    const originalText = btnElement.innerText;
+                    btnElement.innerText = "✅ Kopyalandı";
+                    setTimeout(() => { btnElement.innerText = originalText; }, 2000);
+                }
+            }).catch(() => {
+                showToast("Kopyalama başarısız oldu.", "error");
+            });
+        }
+
+        // Global Modal Keyboard & Backdrop Handlers
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeIncidentModal();
+                closeLoginModal();
+            }
+        });
+
+        document.getElementById('incidentModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'incidentModal') closeIncidentModal();
+        });
+
+        document.getElementById('loginModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'loginModal') closeLoginModal();
+        });
+
+        initAuth().then(() => {
+            fetchOverview();
+            fetchIncidents();
+        });
+    </script>
+</body>
+</html>\n
