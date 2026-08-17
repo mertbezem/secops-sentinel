@@ -35,6 +35,11 @@ eventlog.csv
 *.pdf
 scratch/
 
+# Environment & Secrets
+.env
+*.env
+*.env.local
+
 # IDE & OS
 .idea/
 .vscode/
