@@ -28,9 +28,11 @@ ENV/
 # Data & Database
 data/raw/*
 !data/raw/.gitkeep
+eventlog.csv
 *.db
 *.sqlite
 *.sqlite3
+*.pdf
 scratch/
 
 # IDE & OS
