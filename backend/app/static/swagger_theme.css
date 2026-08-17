@@ -98,7 +98,7 @@ body {
 }
 
 .swagger-ui .topbar-wrapper a::after {
-    content: "SecOps Sentinel API Explorer";
+    content: "SecOps Sentinel — API Gezgini";
     font-size: 16px;
     font-weight: 700;
     color: #f8fafc;

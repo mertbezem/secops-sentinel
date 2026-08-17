@@ -36,14 +36,14 @@ class IncidentDetailResponse(IncidentResponse):
 
 
 class IncidentUpdateParams(BaseModel):
-    status: str | None = Field(None, description="OPEN, IN_PROGRESS, RESOLVED, CLOSED")
-    assignee: str | None = None
-    notes: str | None = None
+    status: str | None = Field(None, description="Olay durumu: OPEN, INVESTIGATING, RESOLVED, CLOSED")
+    assignee: str | None = Field(None, description="Atanan analist kullanıcı adı")
+    notes: str | None = Field(None, description="Analist inceleme notları")
 
 
 class IncidentNoteCreate(BaseModel):
-    note_text: str
-    action_type: str = "NOTE"
+    note_text: str = Field(..., description="Analist inceleme notu veya aksiyon açıklaması")
+    action_type: str = Field("NOTE", description="Aksiyon türü: NOTE, STATUS_CHANGE, MITIGATION")
 
 
 class IncidentNoteResponse(BaseModel):
