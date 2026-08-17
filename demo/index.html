@@ -806,7 +806,7 @@
 
         <div class="header-right-actions">
             <button class="user-chip" onclick="openLoginModal()" id="userProfileBtn">👤 admin (YÖNETİCİ)</button>
-            <a href="http://localhost:8000/docs" target="_blank" class="swagger-btn">API Dokümantasyonu ↗</a>
+            <a href="/docs" target="_blank" class="swagger-btn">API Dokümantasyonu ↗</a>
         </div>
     </header>
 
@@ -1163,12 +1163,12 @@
 
     <!-- Alt Bilgi (Footer) -->
     <footer class="site-footer">
-        SecOps Sentinel Kurumsal SIEM &bull; REST API: <a href="http://localhost:8000/docs" style="color: var(--cyan-400); text-decoration: none;">/docs</a> &bull; Adli PDF Raporlama &bull; AI Tehdit Analizi &bull; MITRE ATT&CK Matrisi
+        SecOps Sentinel Kurumsal SIEM &bull; REST API: <a href="/docs" style="color: var(--cyan-400); text-decoration: none;">/docs</a> &bull; Adli PDF Raporlama &bull; AI Tehdit Analizi &bull; MITRE ATT&CK Matrisi
     </footer>
 
     <!-- Frontend Mantık Scripti -->
     <script>
-        const API_BASE = "http://localhost:8000/api/v1";
+        const API_BASE = (window.location.protocol.startsWith('http')) ? '/api/v1' : 'http://localhost:8000/api/v1';
         let allIncidents = [];
         let authToken = localStorage.getItem('secops_auth_token') || '';
         let currentUser = null;

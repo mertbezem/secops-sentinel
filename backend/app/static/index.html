@@ -1168,7 +1168,7 @@
 
     <!-- Frontend Mantık Scripti -->
     <script>
-        const API_BASE = "/api/v1";
+        const API_BASE = (window.location.protocol.startsWith('http')) ? '/api/v1' : 'http://localhost:8000/api/v1';
         let allIncidents = [];
         let authToken = localStorage.getItem('secops_auth_token') || '';
         let currentUser = null;
