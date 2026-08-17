@@ -1,0 +1,445 @@
+/* SecOps Sentinel — Ultra-Modern Dark Obsidian Swagger Theme */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+
+:root {
+    --bg-void: #050811;
+    --bg-base: #080d1a;
+    --bg-surface: #0e1526;
+    --bg-card: #121b30;
+    --bg-code: #03060c;
+    
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-medium: rgba(255, 255, 255, 0.15);
+    --border-accent: rgba(14, 165, 233, 0.4);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    --cyan-500: #0ea5e9;
+    --cyan-400: #38bdf8;
+    --cyan-900: rgba(14, 165, 233, 0.12);
+    
+    --green-500: #10b981;
+    --green-400: #34d399;
+    --green-900: rgba(16, 185, 129, 0.12);
+    
+    --orange-500: #f97316;
+    --orange-400: #fb923c;
+    --orange-900: rgba(249, 115, 22, 0.12);
+    
+    --red-500: #ef4444;
+    --red-400: #f87171;
+    --red-900: rgba(239, 68, 68, 0.12);
+    
+    --purple-500: #8b5cf6;
+    --purple-900: rgba(139, 92, 246, 0.12);
+}
+
+/* Custom Dark Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #050811;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+body {
+    background-color: var(--bg-void) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* Topbar Branding */
+.swagger-ui .topbar {
+    background: rgba(14, 21, 38, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    padding: 14px 32px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+}
+
+.swagger-ui .topbar .download-url-wrapper {
+    display: none !important;
+}
+
+.swagger-ui .topbar-wrapper a {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-decoration: none !important;
+    color: #ffffff !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 20px !important;
+    letter-spacing: -0.02em !important;
+}
+
+.swagger-ui .topbar-wrapper a img {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="%2338bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>') !important;
+}
+
+.swagger-ui .topbar-wrapper a span {
+    display: none !important;
+}
+
+.swagger-ui .topbar-wrapper a::after {
+    content: "SecOps Sentinel API Explorer";
+    font-size: 16px;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+/* Info Section Banner */
+.swagger-ui .info {
+    margin: 36px 0 !important;
+    background: linear-gradient(135deg, rgba(14, 21, 38, 0.9) 0%, rgba(8, 13, 26, 0.95) 100%) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 16px !important;
+    padding: 32px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.swagger-ui .info .title {
+    color: #ffffff !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.swagger-ui .info .title small.version-stamp {
+    background: rgba(14, 165, 233, 0.15) !important;
+    color: var(--cyan-400) !important;
+    border: 1px solid var(--border-accent) !important;
+    border-radius: 20px !important;
+    padding: 4px 12px !important;
+    font-size: 13px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+}
+
+.swagger-ui .info p, .swagger-ui .info li {
+    color: var(--text-secondary) !important;
+    font-size: 14.5px !important;
+    line-height: 1.65 !important;
+}
+
+.swagger-ui .info h3, .swagger-ui .info h4 {
+    color: var(--cyan-400) !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 18px !important;
+    margin-top: 20px !important;
+}
+
+.swagger-ui .info code {
+    background: #121b30 !important;
+    color: var(--cyan-400) !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--border-subtle) !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+}
+
+/* Operation Blocks (Tags / Categories) */
+.swagger-ui .opblock-tag {
+    color: #ffffff !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    padding: 20px 0 10px !important;
+}
+
+.swagger-ui .opblock-tag small {
+    color: var(--text-secondary) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+}
+
+.swagger-ui .opblock-tag:hover {
+    color: var(--cyan-400) !important;
+}
+
+/* Endpoints Container */
+.swagger-ui .opblock {
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+    margin: 0 0 14px !important;
+    transition: all 0.25s ease !important;
+    overflow: hidden !important;
+}
+
+.swagger-ui .opblock:hover {
+    border-color: var(--border-medium) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+}
+
+.swagger-ui .opblock .opblock-summary {
+    padding: 12px 18px !important;
+}
+
+.swagger-ui .opblock .opblock-summary-path {
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+.swagger-ui .opblock .opblock-summary-description {
+    color: var(--text-secondary) !important;
+    font-size: 13px !important;
+}
+
+/* Method Colors */
+.swagger-ui .opblock.opblock-get {
+    border-left: 4px solid var(--cyan-500) !important;
+    background: var(--cyan-900) !important;
+}
+.swagger-ui .opblock.opblock-get .opblock-summary-method {
+    background: var(--cyan-500) !important;
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    min-width: 75px !important;
+}
+
+.swagger-ui .opblock.opblock-post {
+    border-left: 4px solid var(--green-500) !important;
+    background: var(--green-900) !important;
+}
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+    background: var(--green-500) !important;
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    min-width: 75px !important;
+}
+
+.swagger-ui .opblock.opblock-patch {
+    border-left: 4px solid var(--orange-500) !important;
+    background: var(--orange-900) !important;
+}
+.swagger-ui .opblock.opblock-patch .opblock-summary-method {
+    background: var(--orange-500) !important;
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    min-width: 75px !important;
+}
+
+.swagger-ui .opblock.opblock-delete {
+    border-left: 4px solid var(--red-500) !important;
+    background: var(--red-900) !important;
+}
+.swagger-ui .opblock.opblock-delete .opblock-summary-method {
+    background: var(--red-500) !important;
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    min-width: 75px !important;
+}
+
+/* Operation Body & Forms */
+.swagger-ui .opblock-body {
+    background: #080d1a !important;
+    padding: 20px !important;
+    border-top: 1px solid var(--border-subtle) !important;
+}
+
+.swagger-ui select, .swagger-ui input[type=text], .swagger-ui textarea {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-medium) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+}
+
+.swagger-ui select:focus, .swagger-ui input[type=text]:focus, .swagger-ui textarea:focus {
+    border-color: var(--cyan-400) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.25) !important;
+}
+
+/* Parameters Table */
+.swagger-ui table.parameters {
+    background: transparent !important;
+}
+
+.swagger-ui table.parameters thead tr th {
+    color: var(--text-muted) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+.swagger-ui table.parameters tbody tr td {
+    color: var(--text-secondary) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    font-size: 13.5px !important;
+}
+
+.swagger-ui .parameter__name {
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+}
+
+.swagger-ui .parameter__type {
+    color: var(--cyan-400) !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
+}
+
+/* Code Highlighting & Response Bodies */
+.swagger-ui .highlight-code, .swagger-ui .microlight, .swagger-ui pre {
+    background: var(--bg-code) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 8px !important;
+    color: #38bdf8 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+    padding: 14px !important;
+}
+
+/* Authorize Button & Floating Controls */
+.swagger-ui .btn {
+    border-radius: 8px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    transition: all 0.2s ease !important;
+}
+
+.swagger-ui .btn.authorize {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+    border: 1px solid var(--cyan-400) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(14, 165, 233, 0.35) !important;
+    padding: 8px 18px !important;
+}
+
+.swagger-ui .btn.authorize:hover {
+    box-shadow: 0 0 24px rgba(14, 165, 233, 0.6) !important;
+    transform: translateY(-1px);
+}
+
+.swagger-ui .btn.authorize svg {
+    fill: #ffffff !important;
+}
+
+.swagger-ui .btn.execute {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.35) !important;
+    padding: 9px 24px !important;
+}
+
+.swagger-ui .btn.execute:hover {
+    box-shadow: 0 0 24px rgba(16, 185, 129, 0.6) !important;
+}
+
+.swagger-ui .try-out__btn {
+    background: #1e293b !important;
+    color: var(--cyan-400) !important;
+    border: 1px solid var(--border-accent) !important;
+    padding: 6px 14px !important;
+}
+
+.swagger-ui .try-out__btn:hover {
+    background: rgba(14, 165, 233, 0.15) !important;
+}
+
+/* Modal Window (Authorize Dialog) */
+.swagger-ui .dialog-ux .backdrop-ux {
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+.swagger-ui .dialog-ux .modal-ux {
+    background: #0e1526 !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.95) !important;
+    overflow: hidden !important;
+}
+
+.swagger-ui .dialog-ux .modal-ux-header {
+    border-bottom: 1px solid var(--border-subtle) !important;
+    background: #080d1a !important;
+    padding: 16px 24px !important;
+}
+
+.swagger-ui .dialog-ux .modal-ux-header h3 {
+    color: #ffffff !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 20px !important;
+}
+
+.swagger-ui .dialog-ux .modal-ux-content {
+    background: #0e1526 !important;
+    color: var(--text-secondary) !important;
+    padding: 24px !important;
+}
+
+/* Schemas / Models Section */
+.swagger-ui section.models {
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 16px !important;
+    margin: 40px 0 !important;
+}
+
+.swagger-ui section.models h4 {
+    color: #ffffff !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 20px !important;
+    padding: 18px 24px !important;
+}
+
+.swagger-ui .model-box {
+    background: #080d1a !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+}
+
+.swagger-ui .model-title {
+    color: #ffffff !important;
+    font-family: 'JetBrains Mono', monospace !important;
+}
+
+.swagger-ui .prop-type {
+    color: var(--cyan-400) !important;
+    font-family: 'JetBrains Mono', monospace !important;
+}

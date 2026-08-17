@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -40,12 +41,70 @@ with SessionLocal() as db_session:
     registry.seed_rules(db_session)
     UserService.seed_default_users(db_session)
 
+openapi_tags = [
+    {
+        "name": "Auth",
+        "description": "🔐 **JWT Kimlik Doğrulama & RBAC** — Kullanıcı girişi, rol tabanlı erişim kontrolü (`ADMIN`, `ANALYST`, `VIEWER`) ve kullanıcı yönetimi.",
+    },
+    {
+        "name": "Detection",
+        "description": "⚡ **Otonom Algılama Motoru** — R001–R005 tespit kurallarını çalıştırır, anomalileri yakalar ve olay korelasyonu üretir.",
+    },
+    {
+        "name": "Incidents",
+        "description": "🚨 **Güvenlik Olayları & Adli Analiz (SOC)** — Olay yaşam döngüsü, yapay zeka (AI) kök neden analizi, adli PDF raporlama ve denetim notları.",
+    },
+    {
+        "name": "Events",
+        "description": "📜 **Ham Log & Olay Arama Gezgini** — Normalleştirilmiş Windows Event Log kayıtlarını filtreleme, arama ve sayfalandırma.",
+    },
+    {
+        "name": "Machines",
+        "description": "🖥️ **Uç Nokta Varlık & Zaman Çizelgesi** — Sunucu kritiklik seviyeleri, geçmiş telemetri ve olay zaman çizelgeleri.",
+    },
+    {
+        "name": "Rules",
+        "description": "⚙️ **Algılama Kuralları Yönetimi** — Kural parametrelerini (Eşik, Zaman Penceresi, Ağırlık) çalışma anında dinamik olarak güncelleme.",
+    },
+    {
+        "name": "Stats",
+        "description": "📊 **SOC İstatistikleri & MITRE ATT&CK** — Genel tehdit metrikleri, zaman serisi dağılımı ve taktiksel ısı haritası.",
+    },
+    {
+        "name": "Alerts",
+        "description": "🔔 **Alarm & Webhook Entegrasyonu** — E-posta ve webhook bildirim ayarları, otomatik alarm tetikleme.",
+    },
+    {
+        "name": "Ingest",
+        "description": "📥 **Toplu Log Yükleme & Ayrıştırma** — CSV dosyalarını yükleme, normalizasyon ve şablonlama arka plan işleri.",
+    },
+    {
+        "name": "Health",
+        "description": "❤️ **Sistem Sağlık Durumu** — API ve veritabanı liveness/readiness kontrolleri.",
+    },
+]
+
+app_description = """
+### 🛡️ Kurumsal Seviye SIEM & Olay Müdahale REST API Platformu
+
+**SecOps Sentinel API**; ham Windows Olay Günlüklerinin (Event Log) normalizasyonunu, şablonlamasını,
+davranışsal taban çizgisi analizini, MITRE ATT&CK eşleştirmesini, heuristik risk skorlamasını ve
+otonom olay korelasyonunu sağlayan yüksek performanslı bir güvenlik servisidir.
+
+#### 🔐 Kimlik Doğrulama Bilgisi:
+* Sistem **JWT Bearer Token** standardı ile korunmaktadır.
+* Token almak için `/api/v1/auth/login` uç noktasına kullanıcı adı ve şifrenizi gönderin.
+* Yetki seviyeleri: **ADMIN** (Tam Yetki), **ANALYST** (Analiz & Güncelleme), **VIEWER** (Salt Okunur).
+"""
+
 app = FastAPI(
-    title=settings.PROJECT_NAME,
+    title="SecOps Sentinel — SOC & SIEM API",
+    description=app_description,
     version=settings.VERSION,
+    openapi_tags=openapi_tags,
     openapi_url="/openapi.json",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    docs_url=None,  # Custom modern Swagger UI rendered below
+    redoc_url=None  # Custom ReDoc rendered below
 )
 
 # Configure CORS
@@ -95,6 +154,27 @@ app.include_router(auth_router, prefix=api_v1_prefix)
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url="/openapi.json",
+        title="SecOps Sentinel — API Dokümantasyonu & Swagger",
+        swagger_favicon_url="https://fastapi.tiangolo.com/img/favicon.png",
+        swagger_css_url="/static/swagger_theme.css",
+        swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
+        custom_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js",
+    )
+
+
+@app.get("/redoc", include_in_schema=False)
+async def custom_redoc_html():
+    return get_redoc_html(
+        openapi_url="/openapi.json",
+        title="SecOps Sentinel — ReDoc API Dokümantasyonu",
+        redoc_favicon_url="https://fastapi.tiangolo.com/img/favicon.png",
+    )
 
 
 @app.get("/", response_class=FileResponse)
