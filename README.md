@@ -1,8 +1,11 @@
 # SecOps Sentinel — Güvenlik Olay Günlüğü & Otonom Alarm Motoru
 
-[![CI](https://github.com/user/secops-sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/user/secops-sentinel/actions)
-[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com/)
+![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0+-D71F00?logo=sqlalchemy&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-51%20Passed-10B981?logo=pytest&logoColor=white)
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE%20ATT%26CK-v14.1-orange?logo=shield)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
 **SecOps Sentinel**, yüksek hacimli Windows Olay Günlüklerini (Event Log) analiz etmek için geliştirilmiş kurumsal seviyede bir SIEM Tespit ve Olay Müdahale (Incident Response) platformudur. Ham log akışlarını normalize edilmiş mesaj şablonlarına indirger, makine bazlı davranışsal taban çizgileri (baseline) hesaplar, dinamik algılama kurallarıyla (R001–R005) anomalileri yakalar, tespitleri MITRE ATT&CK teknikleriyle eşleştirir ve ilişkili güvenlik olaylarını modern, koyu temalı bir SOC panelinde analistlerin incelemesine sunar.
 
