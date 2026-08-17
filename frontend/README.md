@@ -1,12 +1,12 @@
-# SecOps Sentinel — Frontend Roadmap & Phase 2 Notes
+# SecOps Sentinel — Ön Yüz Yol Haritası & Faz 2 Notları
 
-This directory contains notes for **Phase 2 (React SPA Dashboard)**.
+Bu dizin, **Faz 2 (React SPA Dashboard)** için mimari notları içermektedir.
 
-In Phase 1 (MVP), the application provides a zero-build, standalone Vanilla JS dashboard located at `demo/index.html`.
+Faz 1 (MVP) kapsamında, `demo/index.html` ve `backend/app/static/` altında bağımsız, sıfır derleme gerektiren, ultra modern bir Vanilla JS + Chart.js arayüzü sunulmaktadır.
 
-## Phase 2 Planned Features:
-- **Framework**: React 18 + TypeScript + Vite.
-- **State & Data Fetching**: TanStack Query (React Query) for async server state management.
-- **Type Safety**: Automatic TypeScript type generation from FastAPI via `openapi-typescript`.
-- **UI Components**: TailwindCSS + Lucide Icons + Recharts for interactive SIEM time-series graphs and MITRE ATT&CK heatmaps.
-- **Realtime**: WebSocket stream integration for live log ingestion and instant alert notifications.
+## 🚀 Faz 2 İçin Planlanan Özellikler:
+- **Çatı (Framework)**: React 18 + TypeScript + Vite.
+- **Durum & Veri Yönetimi**: Asenkron sunucu durumu için TanStack Query (React Query).
+- **Tip Güvenliği**: FastAPI'den `openapi-typescript` ile otomatik TypeScript tip üretimi.
+- **Arayüz Bileşenleri**: TailwindCSS + Lucide Icons + Recharts ile etkileşimli SIEM zaman serisi grafikleri ve MITRE ATT&CK ısı haritaları.
+- **Gerçek Zamanlı Akış**: Canlı log akışı ve anlık alarm bildirimleri için WebSocket entegrasyonu.

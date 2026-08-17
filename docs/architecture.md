@@ -1,63 +1,63 @@
-# SecOps Sentinel — System Architecture & Design Rationale
+# SecOps Sentinel — Sistem Mimarisi & Tasarım Kararları
 
-## 1. Architectural Layers & Separation of Concerns
+## 1. Katmanlı Mimari & Sorumlulukların Ayrımı
 
-SecOps Sentinel enforces strict architectural separation of concerns (NFR-11):
+SecOps Sentinel, katı bir mimari katman ayrımı uygular (NFR-11):
 
 ```
 +-------------------------------------------------------------+
-|                 FastAPI Routing & Validation                |
+|                 FastAPI Yönlendirme & Doğrulama             |
 |                    backend/app/api/v1/                       |
-|   (HTTP Validation, Pydantic Schemas, NO SQL / Business)    |
+|   (HTTP Doğrulama, Pydantic Şemaları, SQL / İş Mantığı YOK) |
 +-------------------------------------------------------------+
                               |
                               v
 +-------------------------------------------------------------+
-|                   Business Logic Layer                      |
+|                     İş Mantığı Katmanı                      |
 |                    backend/app/services/                    |
-|   (Query Execution, Ingestion, Baseline, Rule Management)   |
+|  (Sorgu Çalıştırma, İçe Aktarma, Baseline, Kural Yönetimi)  |
 +-------------------------------------------------------------+
                               |
                               v
 +-------------------------------------------------------------+
-|                 SQLAlchemy 2.0 ORM Models                   |
+|                 SQLAlchemy 2.0 ORM Modelleri                |
 |                    backend/app/models/                      |
 |      (Machine, Event, MessageTemplate, Rule, Finding)       |
 +-------------------------------------------------------------+
                               |
                               v
 +-------------------------------------------------------------+
-|                 Database Engine (PostgreSQL / SQLite)       |
+|              Veritabanı Motoru (PostgreSQL / SQLite)        |
 +-------------------------------------------------------------+
 ```
 
 ---
 
-## 2. Ingestion & Normalization Strategy
+## 2. İçe Aktarma & Normalizasyon Stratejisi
 
-1. **Chunked Streaming**: Loads large CSV files in configurable batches (default 5,000 rows) to keep memory usage minimal ($< 150 \text{MB}$).
-2. **Deduplication Engine**: Calculates SHA-256 hash `SHA256(machine | source | entry_type | ts_utc | message)`. Duplicate events are skipped, preventing duplicate findings.
-3. **Template Extraction**: Replaces variable parameters (Hex, GUIDs, SIDs, IP addresses, File paths, Timestamps, Quoted strings, Numbers) with standardized placeholders (`<HEX>`, `<GUID>`, `<IP>`, `<PATH>`, `<TIMESTAMP>`, etc.). Achieves **50.17:1 compression ratio**.
-4. **Entity Extraction**: Uses regular expressions to extract structured security entities (IPs, SIDs, Hex error codes, File paths) into JSONB for analysis.
+1. **Parçalı Akış (Chunked Streaming)**: Büyük CSV dosyalarını yapılandırılabilir partiler halinde (varsayılan 5.000 satır) yükleyerek bellek kullanımını $< 150 \text{MB}$ seviyesinde tutar.
+2. **Teilleme Motoru (Deduplication)**: Her satır için `SHA256(machine | source | entry_type | ts_utc | message)` hash'i hesaplar. Mükerrer loglar elenerek mükerrer bulgu üretilmesi engellenir.
+3. **Mesaj Şablonlama (Template Extraction)**: Değişken parametreleri (Hex, GUID, SID, IP adresi, Dosya yolu, Zaman damgası, Tırnak içi metin, Sayılar) standart yer tutucularla (`<HEX>`, `<GUID>`, `<IP>`, `<PATH>`, `<TIMESTAMP>` vb.) değiştirir. **50.17:1 sıkıştırma oranı** sağlar.
+4. **Varlık Çıkarımı (Entity Extraction)**: Düzenli ifadeler (Regex) ile mesaj içindeki IP adreslerini, SID'leri, hata kodlarını ve dosya yollarını JSONB alanında yapılandırır.
 
 ---
 
-## 3. Baseline & Statistical Calculation Engine
+## 3. Davranışsal Taban Çizgisi & İstatistiksel Hesaplama
 
-Per-machine baseline statistical profiles are computed by measuring hourly log frequency mean ($\mu$) and standard deviation ($\sigma$):
+Her makine için saatlik log frekansı ortalaması ($\mu$) ve standart sapması ($\sigma$) hesaplanır:
 
-$$\mu = \frac{\text{Total Events}}{\text{Time Span in Hours}}$$
+$$\mu = \frac{\text{Toplam Olay Sayısı}}{\text{Saat Cinsinden Zaman Aralığı}}$$
 
 $$\sigma = \sqrt{\mu}$$
 
-Baseline metrics are stored in the `baselines` table and referenced dynamically during detection rule execution.
+Taban çizgisi metrikleri `baselines` tablosunda saklanır ve algılama kuralları tarafından dinamik olarak sorgulanır.
 
 ---
 
-## 4. React-Readiness & API First Principles
+## 4. React Entegrasyonuna Hazırlık & API-First İlkeleri
 
-1. **JSON Only**: Backend returns standard JSON responses with zero Jinja2 or server-side HTML rendering.
-2. **Universal Envelope**: List endpoints return `{"items": [...], "total": N, "page": N, "page_size": N}`.
-3. **ISO 8601 UTC Timestamps**: All datetimes return formatted in ISO 8601 with `Z` suffix (`2020-11-14T08:41:59Z`).
-4. **Uppercase Enums**: All severities (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFO`) and statuses (`OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`) are standardized uppercase strings.
-5. **Standard Error Schema**: `{"error": {"code": "...", "message": "...", "field": "..."}}`.
+1. **Yalnızca JSON**: Arka uç sunucu taraflı HTML render etmez (Jinja2 yoktur), tek çıktı standart JSON'dur.
+2. **Evrensel Sayfalama Zarfı**: Tüm liste uç noktaları `{"items": [...], "total": N, "page": N, "page_size": N}` yapısını döndürür.
+3. **ISO 8601 UTC Zaman Damgaları**: Tüm tarihler `Z` sonekiyle ISO 8601 biçiminde döner (`2020-11-14T08:41:59Z`).
+4. **Büyük Harf Enum Standartları**: Tüm önem dereceleri (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFO`) ve durumlar (`OPEN`, `INVESTIGATING`, `RESOLVED`, `CLOSED`) standart büyük harfli dizelerdir.
+5. **Standart Hata Şeması**: `{"error": {"code": "...", "message": "...", "field": "..."}}`.
