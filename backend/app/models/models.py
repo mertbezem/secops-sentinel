@@ -96,7 +96,7 @@ class Rule(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     params: Mapped[dict[str, Any]] = mapped_column(JSON_TYPE, default=dict, nullable=False)
-    weight: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    weight: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
     mitre_techniques: Mapped[list[str]] = mapped_column(ARRAY_STRING, default=list, nullable=False)
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 

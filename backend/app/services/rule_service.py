@@ -29,7 +29,7 @@ def update_rule_config(db: Session, rule_code: str, params: RuleUpdateParams) ->
         rule.params = merged_params
 
     if params.weight is not None:
-        rule.weight = int(params.weight)
+        rule.weight = float(params.weight)
 
     db.commit()
     db.refresh(rule)
