@@ -35,6 +35,6 @@ class EntityExtractor:
         return entities
 
 
-# Module-level convenience wrapper
+# Modül seviyesinde yardımcı sarmalayıcı fonksiyon
 def extract_entities(message: str) -> dict[str, Any]:
     return EntityExtractor.extract_entities(message)

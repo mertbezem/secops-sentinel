@@ -14,6 +14,6 @@ def trigger_detection(
     db: Session = Depends(get_db)
 ) -> dict[str, Any]:
     """
-    Triggers the autonomous detection pipeline across all events.
+    Tüm olay kayıtları üzerinde otonom tehdit tespit motorunu çalıştırır.
     """
     return run_detection_pipeline(db)

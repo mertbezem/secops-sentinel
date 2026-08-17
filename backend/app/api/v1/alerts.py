@@ -29,7 +29,7 @@ class AlertConfigResponse(BaseModel):
 @router.get("/config", response_model=AlertConfigResponse)
 def get_alert_config():
     """
-    Returns the current email alert configuration (credentials are masked).
+    Mevcut e-posta alarm yapılandırmasını döner (kimlik bilgileri maskelenmiştir).
     """
     return AlertConfigResponse(
         email_alerts_enabled=settings.EMAIL_ALERTS_ENABLED,
@@ -47,7 +47,7 @@ def get_alert_config():
 @router.post("/test")
 def send_test_email(payload: TestEmailRequest | None = None):
     """
-    Dispatches a test verification email to test SMTP settings.
+    SMTP ayarlarını test etmek amacıyla doğrulama e-postası gönderir.
     """
     target_email = (payload.recipient if payload and payload.recipient else settings.ALERT_EMAIL_TO)
     result = AlertService.send_test_alert(recipient=target_email)
@@ -66,7 +66,7 @@ def send_incident_email_alert(
     db: Session = Depends(get_db)
 ):
     """
-    Manually sends or resends an email alert for a specific incident.
+    Belirli bir güvenlik olayı için e-posta alarmını manuel olarak tetikler.
     """
     incident = db.get(Incident, incident_id)
     if not incident:

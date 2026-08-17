@@ -33,10 +33,10 @@ from app.services.user_service import UserService
 
 setup_logging()
 
-# Ensure DB tables exist on startup
+# Sunucu başlangıcında veritabanı tablolarının varlığını doğrula
 Base.metadata.create_all(bind=engine)
 
-# Seed rules and default users into database
+# Varsayılan kuralları ve kullanıcı hesaplarını tohumla (seed)
 with SessionLocal() as db_session:
     registry.seed_rules(db_session)
     UserService.seed_default_users(db_session)
@@ -107,7 +107,7 @@ app = FastAPI(
     redoc_url=None  # Custom ReDoc rendered below
 )
 
-# Configure CORS
+# CORS (Cross-Origin Resource Sharing) yapılandırması
 origins = settings.ALLOWED_ORIGINS
 if isinstance(origins, str):
     origins = [origins]
@@ -131,12 +131,12 @@ async def add_security_headers(request: Request, call_next: Callable[[Request], 
     return response
 
 
-# Exception handlers
+# Global hata yakalayıcıları (Exception Handlers)
 app.add_exception_handler(SecOpsException, secops_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(Exception, global_exception_handler)
 
-# Include API v1 Routers under /api/v1
+# API v1 rotalarını /api/v1 altına dahil et
 api_v1_prefix = settings.API_V1_STR
 
 app.include_router(health_router, prefix=api_v1_prefix)
@@ -150,7 +150,7 @@ app.include_router(stats_router, prefix=api_v1_prefix)
 app.include_router(alerts_router, prefix=api_v1_prefix)
 app.include_router(auth_router, prefix=api_v1_prefix)
 
-# Static Files Directory
+# Statik dosya dizini (Web Arayüzü ve CSS)
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")

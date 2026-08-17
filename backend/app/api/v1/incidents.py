@@ -76,7 +76,7 @@ def download_incident_pdf(
     db: Session = Depends(get_db)
 ) -> Response:
     """
-    Generates and downloads a forensic incident report in PDF format.
+    Olay için Türkçe karakter destekli adli bilişim inceleme raporunu (PDF) üretir ve indirir.
     """
     incident = db.get(Incident, incident_id)
     if not incident:
@@ -101,7 +101,7 @@ def get_ai_incident_analysis(
     db: Session = Depends(get_db)
 ):
     """
-    Generates an automated AI forensic narrative, attacker motive analysis, confidence score, and remediation commands.
+    Yapay zeka (AI) ile tehdit kök neden analizi, saldırgan motivasyonu ve önerilen müdahale komutlarını üretir.
     """
     incident = db.get(Incident, incident_id)
     if not incident:
@@ -120,7 +120,7 @@ def add_incident_note(
     current_user: User | None = Depends(get_optional_current_user)
 ) -> IncidentNote:
     """
-    Adds a persistent investigation note or action to the incident audit trail.
+    Olay denetim geçmişine kalıcı bir analist inceleme notu veya müdahale aksiyonu ekler.
     """
     incident = db.get(Incident, incident_id)
     if not incident:
@@ -148,7 +148,7 @@ def get_incident_notes(
     db: Session = Depends(get_db)
 ) -> list[IncidentNote]:
     """
-    Retrieves the chronological audit trail and analyst notes for an incident.
+    Olay için kronolojik analist inceleme notlarını ve aksiyon geçmişini getirir.
     """
     notes = db.scalars(
         select(IncidentNote)

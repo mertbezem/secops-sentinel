@@ -28,7 +28,7 @@ def mitre_matrix(
     db: Session = Depends(get_db)
 ):
     """
-    Returns aggregated MITRE ATT&CK Matrix technique and tactic heatmap data.
+    Tespit edilen tehditlerin MITRE ATT&CK Taktik ve Teknik ısı haritası matrisini döner.
     """
     return get_mitre_matrix(db)
 

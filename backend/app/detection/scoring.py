@@ -12,7 +12,7 @@ CRITICAL_SOURCES = {
 
 def map_score_to_severity(score: int) -> str:
     """
-    Helper function to map a risk score (0-100) to severity.
+    Risk skorunu (0-100) kurumsal önem derecesine (CRITICAL, HIGH, MEDIUM, LOW, INFO) dönüştürür.
     """
     if score >= 80:
         return "CRITICAL"
